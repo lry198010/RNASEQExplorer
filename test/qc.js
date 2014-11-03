@@ -1,1 +1,2 @@
-alert("ok");
+console.log(data[0].type);
+

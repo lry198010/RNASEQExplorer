@@ -13,7 +13,7 @@ var getTotalBasePerPosition = function(data){
 
 $(document).ready(function(){
   $("#testIt").click(function(){
-    drawBox("#Quality",data[1].data,1838,400,10,10,10,10,2,2);
+    drawBox("#Quality",data[1].data,1038,400,10,10,10,10,2,2);
   }); 
 })
 
@@ -23,23 +23,51 @@ $(document).ready(function(){
 // d = [base,mean,median,lq,uq,10q,90q]
 var drawBox = function(appendTo, d, w, h, mt,mr,mb,ml,mil,mir){
    //var svg = d3.select("#Quality_svg") ? d3.select("#Quality_svg") : d3.select(appendTo).append("svg").attr("width",w).attr("height",h).attr("id","Quality_svg")
-   var svg = d3.select(appendTo).append("svg").attr("width",w).attr("height",h).attr("id","Quality_svg")
+   var svg = d3.select(appendTo).append("svg").attr("width",w)
+                                              .attr("height",h)
+                                              .attr("id","Quality_svg")
+                                              .attr("background-color","#dddddd")
    //svg.attr("width",w).attr("height",h);
+   var axisH = 50;
    var maxQual = 45;
    var innerW = w - ml - mr;
-   var innerH = h - mt - mb;
+   var innerH = h - mt - mb - axisH;
    var boxWidth = innerW/d.length;
    var perHeight = innerH / maxQual;
+   
+   var fontsize = 30;
    
    var i = 0;
    var j = 0;
    var meanPloy = [];//left,middle,right
+   var tickValues = []
    
    for(i=0;i<d.length;i++){
      meanPloy[j++] = (i + 0.5) * boxWidth + ml;
      meanPloy[j++] = (maxQual - d[i][1]) * perHeight + mt; 
+     tickValues[i] = i + 0.5;
    }
    //console.log(meanPloy.join(" "));
+   svg.append("text")
+      .text("ok")
+      .attr("class","textts")
+      .attr("x",100 + "px")
+      .attr("y",350 + "px")
+      .attr("text-anchor","middle")
+      .attr("id","tok");
+   svg.append("line")
+      .attr("x1",100 + "px")
+      .attr("x2",100 + "px")
+      .attr("y1",350 + "px")
+      .attr("y2",(350 - fontsize) + "px")
+      .attr("stroke","red");
+   svg.append("line")
+      .attr("x1",100 + "px")
+      .attr("x2",(100 + fontsize * 2) + "px")
+      .attr("y1",(350 - fontsize) + "px")
+      .attr("y2",(350 - fontsize) + "px")
+      .attr("stroke","red");
+
    svg.append("line")
       .attr("x1",ml)
       .attr("x2",ml)
@@ -52,8 +80,16 @@ var drawBox = function(appendTo, d, w, h, mt,mr,mb,ml,mil,mir){
  //     .attr("y1",mt + innerH)
  //     .attr("y2",mt + innerH)
  //     .attr("stroke","black");
-  
-  svg.append("g").call(d3.svg.axis().orient("bottom"));
+ var Xscalar = d3.scale.linear().domain([0,101]).range([0,innerW])
+
+  svg.append("g").attr("class","axis")
+                 .attr("transform","translate(" + ml + "," + (h-ml-axisH) + ")")
+                 .call(d3.svg.axis().scale(Xscalar).orient("bottom").tickValues(tickValues))
+                 .selectAll("text")
+                 .attr("x",function(d,i){return 20;})
+                 .attr("y",0)
+                 .attr("dy",".35em")
+                 .attr("transform", "rotate(90)");
    
  //  svg.selectAll("line.aix").data(d).enter().append("line")
  //                           .attr("x1",function(d,i){return (i + 0.5) * boxWidth + ml;})

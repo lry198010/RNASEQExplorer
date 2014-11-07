@@ -51,13 +51,15 @@ var drawBox = function(appendTo, d, w, h, mt,mr,mb,ml,mil,mir){
      tickValues[i] = i + 0.5;
    }
    
+   j = 0; 
    var YticksValue = [];
-   for(i=0; i<=maxQual; i += 10){
-     YticksValue[i] = i; 
+   for(i=0; i < maxQual; i += 10){
+     YticksValue[j++] = i; 
    }
+   YticksValue[j] = maxQual
 
    var Xscalar = d3.scale.linear().domain([0,d.length]).range([0,innerW])
-
+   
    svg.append("g").attr("class","axis")
                  .attr("transform","translate(" + (ml+ axisY) + "," + (h-mb-axisH) + ")")
                  .call(d3.svg.axis().scale(Xscalar).orient("bottom").tickValues(tickValues))
@@ -70,15 +72,36 @@ var drawBox = function(appendTo, d, w, h, mt,mr,mb,ml,mil,mir){
    svg.append("g").attr("class","axis")
                  .attr("transform","translate(" + (ml + axisY - axisYpad) + "," + mt + ")")
                  .call(d3.svg.axis().scale(Yscalar).orient("left").tickValues(YticksValue));
+   svg.selectAll("rect.up").data(d).enter().append("rect")
+                        .attr("x",function(d,i){return i * boxWidth + mil + ml + axisY;})
+                        .attr("y",mt)
+                        .attr("width", boxWidth)
+                        .attr("height", (maxQual - 30) * perHeight)
+                        .attr("fill",function(d,i){ return i % 2 == 0 ? d3.rgb(245,245,245) : d3.rgb(0,245,245);});
+
+   svg.selectAll("rect.mid").data(d).enter().append("rect")
+                        .attr("x",function(d,i){return i * boxWidth + mil + ml + axisY;})
+                        .attr("y",mt + (maxQual - 30) * perHeight )
+                        .attr("width", boxWidth)
+                        .attr("height", 10 * perHeight)
+                        .attr("fill",function(d,i){ return i % 2 == 0 ? d3.rgb(205,205,205) : d3.rgb(0,205,205);});
+
+   svg.selectAll("rect.mid").data(d).enter().append("rect")
+                        .attr("x",function(d,i){return i * boxWidth + mil + ml + axisY;})
+                        .attr("y",mt + (maxQual - 20) * perHeight )
+                        .attr("width", boxWidth)
+                        .attr("height", 20 * perHeight)
+                        .attr("fill",function(d,i){ return i % 2 == 0 ? d3.rgb(185,185,185) : d3.rgb(0,185,185);});
    
-   svg.selectAll("rect").data(d).enter().append("rect")
+   svg.selectAll("rect.box").data(d).enter().append("rect")
                         .attr("x",function(d,i){return i * boxWidth + mil + ml + axisY;})
                         .attr("y",function(d,i){return (maxQual - d[4]) * perHeight + mt;})
                         .attr("width",boxWidth - mil - mir)
                         .attr("height",function(d){return (d[4] - d[3]) * perHeight;})
-                        .attr("stroke","black")
-                        .attr("sroke-width",1)
+                        .attr("stroke",d3.rgb(0,0,0))
+                        .attr("stroke-width",1)
                         .attr("fill","none");
+
    svg.selectAll("line.Median").data(d).enter().append("line")
                         .attr("x1",function(d,i){return i * boxWidth + mil + ml + axisY;})
                         .attr("y1",function(d){return (maxQual - d[2]) * perHeight + mt;})

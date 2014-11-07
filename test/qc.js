@@ -13,7 +13,7 @@ var getTotalBasePerPosition = function(data){
 
 $(document).ready(function(){
   $("#testIt").click(function(){
-    drawBox("#Quality",data[1].data,1038,400,10,10,10,10,2,2);
+    drawBox("#Quality",data[1].data,1838,400,10,10,10,10,2,2);
   }); 
 })
 
@@ -48,25 +48,6 @@ var drawBox = function(appendTo, d, w, h, mt,mr,mb,ml,mil,mir){
      tickValues[i] = i + 0.5;
    }
    //console.log(meanPloy.join(" "));
-   svg.append("text")
-      .text("ok")
-      .attr("class","textts")
-      .attr("x",100 + "px")
-      .attr("y",350 + "px")
-      .attr("text-anchor","middle")
-      .attr("id","tok");
-   svg.append("line")
-      .attr("x1",100 + "px")
-      .attr("x2",100 + "px")
-      .attr("y1",350 + "px")
-      .attr("y2",(350 - fontsize) + "px")
-      .attr("stroke","red");
-   svg.append("line")
-      .attr("x1",100 + "px")
-      .attr("x2",(100 + fontsize * 2) + "px")
-      .attr("y1",(350 - fontsize) + "px")
-      .attr("y2",(350 - fontsize) + "px")
-      .attr("stroke","red");
 
    svg.append("line")
       .attr("x1",ml)
@@ -74,12 +55,7 @@ var drawBox = function(appendTo, d, w, h, mt,mr,mb,ml,mil,mir){
       .attr("y1",mt)
       .attr("y2",mt + innerH)
       .attr("stroke","black");
- //  svg.append("line")
- //     .attr("x1",ml)
- //     .attr("x2",ml + innerW)
- //     .attr("y1",mt + innerH)
- //     .attr("y2",mt + innerH)
- //     .attr("stroke","black");
+
  var Xscalar = d3.scale.linear().domain([0,101]).range([0,innerW])
 
   svg.append("g").attr("class","axis")

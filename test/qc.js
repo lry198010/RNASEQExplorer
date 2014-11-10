@@ -14,6 +14,7 @@ var getTotalBasePerPosition = function(data){
 $(document).ready(function(){
   $("#testIt").click(function(){
     drawBox("#Quality",data[1].data,1838,400,10,10,10,10,2,2);
+    drawFreqPerSeq("#freqPerSeq",data[3].data,600,400,10,10,10,10);    
   }); 
 })
 
@@ -38,7 +39,6 @@ var drawBox = function(appendTo, d, w, h, mt,mr,mb,ml,mil,mir){
    var perHeight = innerH / maxQual;
    
    
-   var fontsize = 30;
    
    var i = 0;
    var j = 0;
@@ -141,4 +141,46 @@ var drawBox = function(appendTo, d, w, h, mt,mr,mb,ml,mil,mir){
                         .attr("fill","none");
 }
 
-
+//appendTo: the element svg append to
+// w, h: svg width and height
+// mt,mr,mb,ml: margin top, margin right, margin bottom, margin left
+// mil, mil: margin left of box, margin right of box
+// d = [[quality_value,count],[quality_value,count]]
+// Here need to presented in multiple type
+var drawFreqPerSeq = function(appendTo, d, w, h, mt,mr,mb,ml){
+   var svg = d3.select(appendTo).append("svg").attr("width",w)
+                                              .attr("height",h)
+                                              .attr("id","QualPerlSeq")
+                                              .attr("background-color","#dddddd")
+   var axisH = 50;
+   var axisY = 50;
+   var axisYpad = 10;
+   var maxQual = 45;
+   var innerW = w - ml - mr - axisY ;
+   var innerH = h - mt - mb - axisH;
+   var boxWidth = innerW/d.length;
+   var perHeight = innerH / maxQual;
+   
+   var qualRange = [d[0][0],d[0][0]];
+   var freqRange = [d[0][1],d[0][1]];
+   var i = 0;
+   var j = 0;
+   
+   for(i = 1; i < d.length; i++){
+     if(d[i][0] < qualRange[0]) qualRange[0] = d[i][0]; 
+     if(d[i][0] > qualRange[1]) qualRange[1] = d[i][0]; 
+     if(d[i][1] < freqRange[0]) freqRange[0] = d[i][1]; 
+     if(d[i][1] > freqRange[1]) freqRange[1] = d[i][1]; 
+   }
+   
+   var Xscalar = d3.scale.linear().domain(qualRange).range([0,innerW]);
+   svg.append("g").attr("class","axis")
+                 .attr("transform","translate(" + (ml+ axisY) + "," + (h-mb-axisH) + ")")
+                 .call(d3.svg.axis().scale(Xscalar).orient("bottom").tickValues(qualRange))
+                 .selectAll("text")
+                 .attr("x",function(d,i){return 20;})
+                 .attr("y",0)
+                 .attr("dy",".35em")
+                 .attr("transform", "rotate(90)");
+   var Yscalar = d3.scale.linear().domain(freqRange).range([0,innerH]);
+}

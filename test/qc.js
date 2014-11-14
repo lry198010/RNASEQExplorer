@@ -10,7 +10,9 @@ $(document).ready(function(){
   $("#testIt").click(function(){
     drawQualPerPos("#qualPerPos",data[1].data,1838,400,10,10,10,10,2,2);
     drawAveQualPerSeq("#aveQualPerSeq",data[3].data,600,400,10,10,10,10);    
-    drawbasePerPos("#basePerPos",data[4].data,1800,400,10,10,10,10);    
+    drawbasePerPos("#basePerPos", data[4].data, data[4].title, 1800, 400, 10, 10, 10, 10);    
+    drawgcPerPos("#gcPerPos", data[5].data, 1800, 400, 10, 10, 10, 10);    
+    drawaveGCPerSeq("#aveGCPerSeq", data[6].data, 800, 400, 10, 10, 10, 10);
   }); 
   $("#stext").click(function(){
     var txt = $("#inputText").val();
@@ -248,7 +250,7 @@ var drawAveQualPerSeq = function(appendTo, d, w, h, mt,mr,mb,ml){
 // mt,mr,mb,ml: margin top, margin right, margin bottom, margin left
 // d = [[base,G%,A%,T%,C%],...]
 // Here need to presented in multiple type
-drawbasePerPos = function(appendTo, d, w, h, mt,mr,mb,ml){
+drawbasePerPos = function(appendTo, d, title, w, h, mt,mr,mb,ml){
    var svg = d3.select(appendTo).append("svg").attr("width",w)
                                               .attr("height",h)
                                               .attr("id","QualPerlSeq")
@@ -301,20 +303,128 @@ drawbasePerPos = function(appendTo, d, w, h, mt,mr,mb,ml){
       .attr("points",polyLines[0].join(" "))
       .attr("stroke","black")
       .attr("fill","none");
+   svg.append("text")
+      .text(title[1] + "%")
+      .attr("class","axis")
+      .attr("x",0)
+      .attr("y",0)
+      .attr("transform","translate(" + (ml + axisY) + "," + (mt + 50) + ")")
+      .attr("stroke","black");
+   svg.append("line")
+      .attr("x1",0)
+      .attr("y1",0)
+      .attr("x2",20)
+      .attr("y2",0)
+      .attr("transform","translate(" + (ml + axisY + 30) + "," + (mt + 45) + ")")
+      .attr("stroke","black");
    svg.append("polyline")
       .attr("transform","translate(" + (ml + axisY) + "," + mt + ")")
       .attr("points",polyLines[1].join(" "))
       .attr("stroke","red")
       .attr("fill","none");
+   svg.append("text")
+      .text(title[2] + "%")
+      .attr("class","axis")
+      .attr("x",0)
+      .attr("y",0)
+      .attr("transform","translate(" + (ml + axisY) + "," + (mt + 90) + ")")
+      .attr("stroke","red");
+   svg.append("line")
+      .attr("x1",0)
+      .attr("y1",0)
+      .attr("x2",20)
+      .attr("y2",0)
+      .attr("transform","translate(" + (ml + axisY + 30) + "," + (mt + 85) + ")")
+      .attr("stroke","red");
    svg.append("polyline")
       .attr("transform","translate(" + (ml + axisY) + "," + mt + ")")
       .attr("points",polyLines[2].join(" "))
       .attr("stroke","green")
       .attr("fill","none");
+   svg.append("text")
+      .text(title[3] + "%")
+      .attr("class","axis")
+      .attr("x",0)
+      .attr("y",0)
+      .attr("transform","translate(" + (ml + axisY) + "," + (mt + 130) + ")")
+      .attr("stroke","green");
+   svg.append("line")
+      .attr("x1",0)
+      .attr("y1",0)
+      .attr("x2",20)
+      .attr("y2",0)
+      .attr("transform","translate(" + (ml + axisY + 30) + "," + (mt + 125) + ")")
+      .attr("stroke","green");
    svg.append("polyline")
       .attr("transform","translate(" + (ml + axisY) + "," + mt + ")")
       .attr("points",polyLines[3].join(" "))
       .attr("stroke","blue")
       .attr("fill","none");
+   svg.append("text")
+      .text(title[4] + "%")
+      .attr("class","axis")
+      .attr("x",0)
+      .attr("y",0)
+      .attr("transform","translate(" + (ml + axisY) + "," + (mt + 170) + ")")
+      .attr("stroke","blue");
+   svg.append("line")
+      .attr("x1",0)
+      .attr("y1",0)
+      .attr("x2",20)
+      .attr("y2",0)
+      .attr("transform","translate(" + (ml + axisY + 30) + "," + (mt + 165) + ")")
+      .attr("stroke","blue");
 }
-  
+
+//appendTo: the element svg append to
+// w, h: svg width and height
+// mt,mr,mb,ml: margin top, margin right, margin bottom, margin left
+// d = [[base,GC%],...]
+// Here need to presented in multiple type
+drawgcPerPos = function(appendTo, d, w, h, mt,mr,mb,ml){
+   var svg = d3.select(appendTo).append("svg").attr("width",w)
+                                              .attr("height",h)
+                                              .attr("id","QualPerlSeq")
+                                              .attr("background-color","#dddddd")
+   var axisH = 50;
+   var axisY = 50;
+   var axisYpad = 10;
+   var maxQual = 45;
+   var innerW = w - ml - mr - axisY ;
+   var innerH = h - mt - mb - axisH;
+   var boxWidth = innerW/d.length;
+   var perHeight = innerH / maxQual;
+   
+   var xTicks = [];
+   var i = 0;
+   for(i = 0; i < d.length; i++){
+     xTicks[i] = i + 1;
+   }
+
+   var Xscalar = d3.scale.linear().domain([1,d.length]).range([0,innerW]);
+   svg.append("g").attr("class","axis")
+                 .attr("transform","translate(" + (ml+ axisY) + "," + (h-mb-axisH) + ")")
+                 .call(d3.svg.axis().scale(Xscalar).orient("bottom").tickValues(xTicks))
+                 .selectAll("text")
+                 .attr("x",function(d,i){return 20;})
+                 .attr("y",0)
+                 .attr("dy",".35em")
+                 .attr("transform", "rotate(90)");
+
+   var Yscalar = d3.scale.linear().domain([0,100]).range([innerH,0]);
+   var yTicks = [0,10,20,30,40,50,60,70,80,90,100];
+   svg.append("g").attr("class","axis")
+                 .attr("transform","translate(" + (ml + axisY - axisYpad) + "," + mt + ")")
+                 .call(d3.svg.axis().scale(Yscalar).orient("left").tickValues(yTicks));
+   var polyLines = [];
+   var j = 0;
+   for(i = 0; i < d.length; i++){
+     polyLines[j++] = Xscalar(d[i][0]);
+     polyLines[j++] = Yscalar(d[i][1]);
+   }
+   svg.append("polyline")
+      .attr("transform","translate(" + (ml + axisY) + "," + mt + ")")
+      .attr("points",polyLines.join(" "))
+      .attr("stroke","red")
+      .attr("fill","none");
+}

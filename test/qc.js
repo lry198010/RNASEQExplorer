@@ -428,3 +428,25 @@ drawgcPerPos = function(appendTo, d, w, h, mt,mr,mb,ml){
       .attr("stroke","red")
       .attr("fill","none");
 }
+
+// appendTo: the element svg append to
+// w, h: svg width and height
+// mt,mr,mb,ml: margin top, margin right, margin bottom, margin left
+// d = [[base,GC%],...]
+// Here need to presented in multiple type
+drawaveGCPerSeq = function(appendTo, d, w, h, mt,mr,mb,ml){
+   var svg = d3.select(appendTo).append("svg").attr("width",w)
+                                              .attr("height",h)
+                                              .attr("id","QualPerlSeq")
+                                              .attr("background-color","#dddddd")
+   var axisH = 50;
+   var axisY = 50;
+   var axisYpad = 10;
+   var maxQual = 45;
+   var innerW = w - ml - mr - axisY ;
+   var innerH = h - mt - mb - axisH;
+   var boxWidth = innerW/d.length;
+   var perHeight = innerH / maxQual;
+   
+   console.log(d); 
+}
